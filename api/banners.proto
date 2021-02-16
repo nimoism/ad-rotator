@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+import "api/slots.proto";
+
+package api;
+option go_package = ".;pb";
+
+service Banners {
+  rpc Banner(BannerRequest) returns (BannerResult) {}
+  rpc Click(ClickRequest) returns (ClickResult) {}
+  rpc Banners(AllBannersRequest) returns (AllBannersResult) {}
+  rpc CreateBanner(CreateBannerRequest) returns (CreateBannerResult) {}
+  rpc UpdateBanner(UpdateBannerRequest) returns (UpdateBannerResult) {}
+  rpc DeleteBanner(DeleteBannerRequest) returns (DeleteBannerResult) {}
+  rpc BoundSlots(BoundSlotsRequest) returns (BoundSlotsResult) {}
+  rpc BindSlot(BindSlotRequest) returns (BindSlotResult) {}
+  rpc UnbindSlot(UnbindSlotRequest) returns (UnbindSlotResult) {}
+}
+
+message Banner {
+  int64 id = 1;
+  string name = 2;
+}
+
+message BannerRequest {
+  int64 slot_id = 2;
+  int64 user_group_id = 1;
+}
+message BannerResult {
+  Banner banner = 1;
+}
+
+message ClickRequest {
+  int64 banner_id = 1;
+  int64 slot_id = 2;
+  int64 user_group_id = 3;
+}
+message ClickResult {}
+
+message AllBannersRequest {}
+message AllBannersResult {
+  repeated Banner banners = 1;
+}
+
+message CreateBannerRequest {
+  message NewBanner {
+    string name = 2;
+  }
+  NewBanner banner = 1;
+}
+message CreateBannerResult {
+  Banner banner = 1;
+}
+
+message UpdateBannerRequest {
+  Banner banner = 1;
+}
+message UpdateBannerResult {
+  Banner banner = 1;
+}
+
+message DeleteBannerRequest {
+  int64 id = 1;
+}
+message DeleteBannerResult {}
+
+message BoundSlotsRequest {
+  int64 banner_id = 1;
+}
+message BoundSlotsResult {
+  repeated Slot slots = 1;
+}
+
+message BindSlotRequest {
+  int64 banner_id = 1;
+  int64 slot_id = 2;
+}
+message BindSlotResult {}
+
+message UnbindSlotRequest {
+  int64 banner_id = 1;
+  int64 slot_id = 2;
+}
+message UnbindSlotResult {}

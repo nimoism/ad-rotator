@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package api;
+option go_package = ".;pb";
+
+service Slots {
+  rpc Slots(AllSlotsRequest) returns (AllSlotsResult) {}
+  rpc CreateSlot(CreateSlotRequest) returns (CreateSlotResult) {}
+  rpc UpdateSlot(UpdateSlotRequest) returns (UpdateSlotResult) {}
+  rpc DeleteSlot(DeleteSlotRequest) returns (DeleteSlotResult) {}
+}
+
+message Slot {
+  int64 id = 1;
+  string name = 2;
+}
+
+message AllSlotsRequest {}
+message AllSlotsResult {
+  repeated Slot slots = 1;
+}
+
+message CreateSlotRequest {
+  message NewSlot {
+    string name = 1;
+  }
+  NewSlot slot = 1;
+}
+message CreateSlotResult {
+  Slot slot = 1;
+}
+
+message UpdateSlotRequest {
+  Slot slot = 1;
+}
+message UpdateSlotResult {
+  Slot slot = 1;
+}
+
+message DeleteSlotRequest {
+  int64 id = 1;
+}
+message DeleteSlotResult {}
