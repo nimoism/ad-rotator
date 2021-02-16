@@ -22,7 +22,8 @@ env:
 
 before_install:
   - echo "current branch is ${BRANCH}"
-  - cd ${BRANCH}
+  - ls -lA
+#  - ls ${BRANCH} && cd ${BRANCH}
 
 stages:
   - name: Tests
@@ -36,7 +37,7 @@ jobs:
 
     - stage: "Tests"
       name: "Linters"
-      install: go install github.com/golangci/golangci-lint/cmd/golangci-lint
+      install: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
       script: golangci-lint run ./...
 
     - stage: "Tests"
