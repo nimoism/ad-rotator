@@ -22,7 +22,8 @@ env:
 
 before_install:
   - echo "current branch is ${BRANCH}"
-  - ls ${BRANCH} && cd ${BRANCH}
+  - ls -lA
+#  - ls ${BRANCH} && cd ${BRANCH}
 
 stages:
   - name: Tests
