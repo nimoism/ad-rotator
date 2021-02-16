@@ -45,25 +45,23 @@ func TestArmsStart(t *testing.T) {
 func TestArmsWinners(t *testing.T) {
 	seed := time.Now().UnixNano()
 	rand.Seed(seed)
-	for it := 0; it < 1000; it++ {
-		arms := Arms{{count: 1}, {count: 1}, {count: 1}, {count: 1}}
-		lucks := []float32{0.0, 0.8, 0.2, 0.5}
-		tops := []int{1, 3, 2}
-		shows := make(map[int]int)
-		for i := 0; i < 10000; i++ {
-			armIndex, _ := NextArm(arms)
-			shows[armIndex]++
-			arms[armIndex].count++
-			if rand.Float32() < lucks[armIndex] { //nolint:gosec
-				arms[armIndex].winCount++
-			}
+	arms := Arms{{count: 1}, {count: 1}, {count: 1}}
+	lucks := []float32{0.0, 0.8, 0.4}
+	tops := []int{1, 2}
+	shows := make(map[int]int)
+	for i := 0; i < 10000; i++ {
+		armIndex, _ := NextArm(arms)
+		shows[armIndex]++
+		arms[armIndex].count++
+		if rand.Float32() < lucks[armIndex] { //nolint:gosec
+			arms[armIndex].winCount++
 		}
-		totalCount := 0
-		for _, count := range shows {
-			totalCount += count
-		}
-		for i := range tops[:len(tops)-1] {
-			require.Less(t, shows[tops[i+1]], shows[tops[i]], "Wrong top: %v > %v, seed: %v", tops[i], tops[i+1], seed)
-		}
+	}
+	totalCount := 0
+	for _, count := range shows {
+		totalCount += count
+	}
+	for i := range tops[:len(tops)-1] {
+		require.Less(t, shows[tops[i+1]], shows[tops[i]], "Wrong top: %v > %v, seed: %v", tops[i], tops[i+1], seed)
 	}
 }
