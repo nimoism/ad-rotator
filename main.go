@@ -1,3 +1,9 @@
 package main
 
-func main() {}
+import (
+	"github.com/nimoism/ad-rotator/cmd"
+)
+
+func main() {
+	cmd.Execute()
+}
