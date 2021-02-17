@@ -7,8 +7,8 @@ file = ''
 level = 'DEBUG'
 
 [storage]
-dsn = 'postgres://ad-rotator:ad-rotator@localhost:5432/ad-rotator?sslmode=disable'
+dsn = 'postgres://ad-rotator:ad-rotator@db:5432/ad-rotator_test?sslmode=disable'
 max_conn = 10
 max_idle_conn = 30
-retry = 30
+retry = 20
 retry_interval = '500ms'

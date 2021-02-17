@@ -53,7 +53,7 @@ func (r *UserGroupRepo) UpdateUserGroup(ctx context.Context, ug *entity.UserGrou
 }
 
 func (r *UserGroupRepo) DeleteUserGroup(ctx context.Context, id int) error {
-	query := "DELETE FROM user_group WHERE id = ?"
+	query := "DELETE FROM user_group WHERE id = $1"
 	_, err := r.db.ExecContext(ctx, query, id)
 	return err
 }

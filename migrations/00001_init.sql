@@ -21,17 +21,17 @@ CREATE TABLE banner_slot (
 
 CREATE TABLE click_banner_event (
     id bigserial PRIMARY KEY,
-    banner_id bigint CONSTRAINT click_event_fk_banner_id REFERENCES banner(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    user_group_id bigint CONSTRAINT click_event_fk_user_group_id REFERENCES user_group(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    slot_id bigint CONSTRAINT show_banner_event_fk_click_id REFERENCES slot(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    banner_id bigint CONSTRAINT click_event_fk_banner_id REFERENCES banner(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    user_group_id bigint CONSTRAINT click_event_fk_user_group_id REFERENCES user_group(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    slot_id bigint CONSTRAINT show_banner_event_fk_click_id REFERENCES slot(id) ON UPDATE CASCADE ON DELETE CASCADE,
     created_dt timestamptz
 );
 
 CREATE TABLE show_banner_event (
     id bigserial PRIMARY KEY,
-    banner_id bigint CONSTRAINT show_banner_event_fk_banner_id REFERENCES banner(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    user_group_id bigint CONSTRAINT show_banner_event_fk_user_group_id REFERENCES user_group(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    slot_id bigint CONSTRAINT show_banner_event_fk_click_id REFERENCES slot(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    banner_id bigint CONSTRAINT show_banner_event_fk_banner_id REFERENCES banner(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    user_group_id bigint CONSTRAINT show_banner_event_fk_user_group_id REFERENCES user_group(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    slot_id bigint CONSTRAINT show_banner_event_fk_click_id REFERENCES slot(id) ON UPDATE CASCADE ON DELETE CASCADE,
     created_dt timestamptz
 );
 -- +goose StatementEnd

@@ -65,3 +65,24 @@ func TestArmsWinners(t *testing.T) {
 		require.Less(t, shows[tops[i+1]], shows[tops[i]], "Wrong top: %v > %v, seed: %v", tops[i], tops[i+1], seed)
 	}
 }
+
+func TestAtLeastOneArmsCounted(t *testing.T) {
+	arms := Arms{{count: 1}, {count: 1}, {count: 1}}
+	lucks := []float32{0.0, 0.8, 0.4, 0.0}
+	shows := make(map[int]int)
+	for i := 0; i < 10000; i++ {
+		armIndex, _ := NextArm(arms)
+		shows[armIndex]++
+		arms[armIndex].count++
+		if rand.Float32() < lucks[armIndex] { //nolint:gosec
+			arms[armIndex].winCount++
+		}
+	}
+	totalCount := 0
+	for _, count := range shows {
+		totalCount += count
+	}
+	for i := range arms {
+		require.Greater(t, arms[i].count, 0)
+	}
+}

@@ -58,7 +58,8 @@ func (a *App) Run(ctx context.Context) error {
 		signals := make(chan os.Signal, syscall.SIGQUIT|syscall.SIGTERM)
 		signal.Notify(signals)
 		select {
-		case <-signals:
+		case s := <-signals:
+			a.log.Info("Got signal %v", s)
 			cancel()
 		case <-ctx.Done():
 		}

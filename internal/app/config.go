@@ -21,8 +21,10 @@ type LoggerConf struct {
 }
 
 type StorageConf struct {
-	DSN         string
-	ConnTimeout time.Duration
-	MaxIdleConn int `mapstructure:"max_idle_conn"`
-	MaxConn     int `mapstructure:"max_conn"`
+	DSN           string
+	ConnTimeout   time.Duration
+	MaxIdleConn   int `mapstructure:"max_idle_conn"`
+	MaxConn       int `mapstructure:"max_conn"`
+	Retry         int
+	RetryInterval time.Duration `mapstructure:"retry_interval"`
 }
