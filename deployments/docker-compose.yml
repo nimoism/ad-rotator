@@ -1,0 +1,20 @@
+version: "3"
+services:
+  ad-rotator:
+    image: ad-rotator:latest
+    command:
+     - --config=/opt/configs/config.compose.toml
+    environment:
+      - ADR_STORAGE_DSN=postgres://ad-rotator:ad-rotator@db:5432/ad-rotator?sslmode=disable
+    volumes:
+      - ${ADR_CONFIG_PATH}:/opt/configs
+    ports:
+      - 50051:50051
+    depends_on:
+      - db
+  db:
+    image: postgres:13-alpine
+    env_file:
+      - ../configs/.env
+    volumes:
+      - ${ADR_DB_PATH}:/var/lib/postgresql/data

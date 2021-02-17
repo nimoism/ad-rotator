@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package api;
+option go_package = ".;pb";
+
+service UserGroups {
+  rpc UserGroups(AllUGsRequest) returns (AllUGsResult) {}
+  rpc CreateUserGroup(CreateUGRequest) returns (CreateUGResult) {}
+  rpc UpdateUserGroup(UpdateUGRequest) returns (UpdateUGResult) {}
+  rpc DeleteUserGroup(DeleteUGRequest) returns (DeleteUGResult) {}
+}
+
+message UserGroup {
+  int64 id = 1;
+  string name = 2;
+}
+
+message AllUGsRequest {}
+message AllUGsResult {
+  repeated UserGroup ugs = 1;
+}
+
+message CreateUGRequest {
+  message NewUserGroup {
+    string name = 1;
+  }
+  NewUserGroup ug = 1;
+}
+message CreateUGResult {
+  UserGroup ug = 1;
+}
+
+message UpdateUGRequest {
+  UserGroup ug = 1;
+}
+message UpdateUGResult {
+  UserGroup ug = 1;
+}
+
+message DeleteUGRequest {
+  int64 id = 1;
+}
+message DeleteUGResult {}

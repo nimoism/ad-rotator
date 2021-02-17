@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+import "api/banners.proto";
+import "api/slots.proto";
+import "api/user_group.proto";

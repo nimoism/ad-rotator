@@ -1,0 +1,12 @@
+[api]
+listen = '0.0.0.0:50051'
+
+[logger]
+backend = 'logrus'
+file = ''
+level = 'DEBUG'
+
+[storage]
+dsn = 'postgres://ad-rotator:ad-rotator@localhost:5432/ad-rotator?sslmode=disable'
+max_conn = 5
+max_idle_conn = 3
