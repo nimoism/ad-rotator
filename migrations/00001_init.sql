@@ -19,27 +19,47 @@ CREATE TABLE banner_slot (
     UNIQUE (banner_id, slot_id)
 );
 
-CREATE TABLE click_banner_event (
+-- CREATE TABLE click_banner_event (
+--     id bigserial PRIMARY KEY,
+--     banner_id bigint CONSTRAINT click_event_fk_banner_id REFERENCES banner(id) ON UPDATE CASCADE ON DELETE CASCADE,
+--     user_group_id bigint CONSTRAINT click_event_fk_user_group_id REFERENCES user_group(id) ON UPDATE CASCADE ON DELETE CASCADE,
+--     slot_id bigint CONSTRAINT show_banner_event_fk_click_id REFERENCES slot(id) ON UPDATE CASCADE ON DELETE CASCADE,
+--     created_dt timestamptz
+-- );
+
+CREATE TABLE click_banner_event_stat (
     id bigserial PRIMARY KEY,
     banner_id bigint CONSTRAINT click_event_fk_banner_id REFERENCES banner(id) ON UPDATE CASCADE ON DELETE CASCADE,
     user_group_id bigint CONSTRAINT click_event_fk_user_group_id REFERENCES user_group(id) ON UPDATE CASCADE ON DELETE CASCADE,
     slot_id bigint CONSTRAINT show_banner_event_fk_click_id REFERENCES slot(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    created_dt timestamptz
+    count bigint NOT NULL,
+    UNIQUE (banner_id, user_group_id, slot_id)
 );
 
-CREATE TABLE show_banner_event (
+-- CREATE TABLE show_banner_event (
+--     id bigserial PRIMARY KEY,
+--     banner_id bigint CONSTRAINT show_banner_event_fk_banner_id REFERENCES banner(id) ON UPDATE CASCADE ON DELETE CASCADE,
+--     user_group_id bigint CONSTRAINT show_banner_event_fk_user_group_id REFERENCES user_group(id) ON UPDATE CASCADE ON DELETE CASCADE,
+--     slot_id bigint CONSTRAINT show_banner_event_fk_click_id REFERENCES slot(id) ON UPDATE CASCADE ON DELETE CASCADE,
+--     created_dt timestamptz
+-- );
+
+CREATE TABLE show_banner_event_stat (
     id bigserial PRIMARY KEY,
     banner_id bigint CONSTRAINT show_banner_event_fk_banner_id REFERENCES banner(id) ON UPDATE CASCADE ON DELETE CASCADE,
     user_group_id bigint CONSTRAINT show_banner_event_fk_user_group_id REFERENCES user_group(id) ON UPDATE CASCADE ON DELETE CASCADE,
     slot_id bigint CONSTRAINT show_banner_event_fk_click_id REFERENCES slot(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    created_dt timestamptz
+    count bigint NOT NULL,
+    UNIQUE (banner_id, user_group_id, slot_id)
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
 ---DROP TABLE event;
+DROP TABLE show_banner_event_stat;
 DROP TABLE show_banner_event;
+DROP TABLE click_banner_event_stat;
 DROP TABLE click_banner_event;
 DROP TABLE banner_slot;
 DROP TABLE user_group;

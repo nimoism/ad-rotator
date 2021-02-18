@@ -55,11 +55,11 @@ func (a *App) Run(ctx context.Context) error {
 	}
 
 	go func() {
-		signals := make(chan os.Signal, syscall.SIGQUIT|syscall.SIGTERM)
-		signal.Notify(signals)
+		signals := make(chan os.Signal, 1)
+		signal.Notify(signals, syscall.SIGQUIT|syscall.SIGTERM)
 		select {
 		case s := <-signals:
-			a.log.Info("Got signal %v", s)
+			a.log.Infof("Got signal %v", s)
 			cancel()
 		case <-ctx.Done():
 		}

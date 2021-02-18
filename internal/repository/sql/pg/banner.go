@@ -19,15 +19,15 @@ func NewBannerRepo(db *sql.DB) *BannerRepo {
 func (r *BannerRepo) BannerStats(ctx context.Context, slotID, userGroupID int) ([]entity.BannerStat, error) {
 	query := "" +
 		"SELECT " +
-		"	r.id, r.name, " +
-		"	count(DISTINCT se.id) show_count, " +
-		"	count(DISTINCT ce.id) click_count " +
-		"FROM banner r " +
-		"LEFT JOIN banner_slot bs ON r.id = bs.banner_id " +
-		"LEFT JOIN show_banner_event se ON r.id = se.banner_id AND se.user_group_id = $2 " +
-		"LEFT JOIN click_banner_event ce ON r.id = ce.banner_id AND ce.user_group_id = $2 " +
+		"	b.id, b.name, " +
+		"	coalesce(sum(se.count), 0) show_count, " +
+		"	coalesce(sum(ce.count), 0) click_count " +
+		"FROM banner b " +
+		"LEFT JOIN banner_slot bs ON b.id = bs.banner_id " +
+		"LEFT JOIN show_banner_event_stat se ON b.id = se.banner_id AND se.user_group_id = $2 " +
+		"LEFT JOIN click_banner_event_stat ce ON b.id = ce.banner_id AND ce.user_group_id = $2 " +
 		"WHERE bs.slot_id = $1 " +
-		"GROUP BY r.id, r.name"
+		"GROUP BY b.id, b.name"
 	rows, err := r.db.QueryContext(ctx, query, slotID, userGroupID)
 	if err != nil {
 		return nil, fmt.Errorf("banners stats querying error: %w", err)
@@ -50,19 +50,51 @@ func (r *BannerRepo) BannerStats(ctx context.Context, slotID, userGroupID int) (
 }
 
 func (r *BannerRepo) CreateBannerClick(ctx context.Context, click entity.ClickEvent) error {
-	query := "INSERT INTO click_banner_event (banner_id, slot_id, user_group_id, created_dt) VALUES ($1, $2, $3, $4)"
-	_, err := r.db.ExecContext(ctx, query, click.BannerID, click.SlotID, click.UserGroupID, click.Created)
-	if err != nil {
-		return fmt.Errorf("click event insert error: %w", err)
-	}
-	return nil
+	updateQuery := "" +
+		"WITH updated AS (" +
+		"	UPDATE click_banner_event_stat " +
+		"	SET count = count + 1 " +
+		"	WHERE banner_id = $1 AND slot_id = $2 AND user_group_id = $3 " +
+		"	RETURNING id" +
+		") SELECT count(id) FROM updated"
+	insertQuery := "INSERT INTO click_banner_event_stat " +
+		"(banner_id, slot_id, user_group_id, count) VALUES " +
+		"($1, $2, $3, $4)"
+	return r.upsertEvent(ctx, insertQuery, updateQuery, click.BannerID, click.SlotID, click.UserGroupID)
 }
 
 func (r *BannerRepo) CreateBannerShow(ctx context.Context, show entity.ShowEvent) error {
-	query := "INSERT INTO show_banner_event (banner_id, slot_id, user_group_id, created_dt) VALUES ($1, $2, $3, $4)"
-	_, err := r.db.ExecContext(ctx, query, show.BannerID, show.SlotID, show.UserGroupID, show.Created)
-	if err != nil {
-		return fmt.Errorf("show event insert error: %w", err)
+	updateQuery := "" +
+		"WITH updated AS (" +
+		"	UPDATE show_banner_event_stat " +
+		"	SET count = count + 1 " +
+		"	WHERE banner_id = $1 AND slot_id = $2 AND user_group_id = $3 " +
+		"	RETURNING id" +
+		") SELECT count(id) FROM updated"
+	insertQuery := "" +
+		"INSERT INTO show_banner_event_stat " +
+		"(banner_id, slot_id, user_group_id, count) VALUES " +
+		"($1, $2, $3, $4)"
+	return r.upsertEvent(ctx, insertQuery, updateQuery, show.BannerID, show.SlotID, show.UserGroupID)
+}
+
+func (r *BannerRepo) upsertEvent(ctx context.Context, insQ, updQ string, bannerID, slotID, ugID int) error {
+	res := r.db.QueryRowContext(ctx, updQ, bannerID, slotID, ugID)
+	var count int
+	if err := res.Scan(&count); err != nil {
+		return err
+	}
+	if count > 0 {
+		return nil
+	}
+	if _, insertErr := r.db.ExecContext(ctx, insQ, bannerID, slotID, ugID, 1); insertErr != nil {
+		res = r.db.QueryRowContext(ctx, updQ, bannerID, slotID, ugID)
+		if err := res.Scan(&count); err != nil {
+			return err
+		}
+		if count == 0 {
+			return insertErr
+		}
 	}
 	return nil
 }

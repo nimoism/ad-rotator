@@ -152,7 +152,7 @@ func TestBannersShows(t *testing.T) {
 	}
 	require.Len(t, banners, 3)
 	shows := make([]int, len(banners))
-	lucks := []float32{0.1, 0.9, 0.1}
+	lucks := []float32{0.2, 0.8, 0.2}
 	topIdx := 1
 	slotID := slots[0].Id
 	ugID := ugs[0].Id
@@ -160,7 +160,7 @@ func TestBannersShows(t *testing.T) {
 	seed := time.Now().UnixNano()
 	t.Logf("seed: %v", seed)
 	rand.Seed(seed)
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 1000; i++ {
 		res, err := bClient.Banner(ctx, &pb.BannerRequest{SlotId: slotID, UserGroupId: ugID})
 		require.NoError(t, err)
 		banner := res.Banner
