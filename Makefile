@@ -31,19 +31,22 @@ docker-build:
 	@docker build -t ad-rotator -f deployments/Dockerfile .
 
 up:
-	@docker-compose -f deployments/docker-compose.yml -p ad-rotator up
+	@docker-compose -f deployments/docker-compose.yml -p adr up
+
+down:
+	@docker-compose -f deployments/docker-compose.yml -p adr down
 
 uptest:
-	@docker-compose -f deployments/docker-compose.test.yml -p ad-rotator-test up -d
-	@sleep 10  # wait for db
-	@docker-compose -f deployments/docker-compose.test.yml -p ad-rotator-test exec ad-rotator /bin/true || exit 1
-	@docker-compose -f deployments/docker-compose.test.yml -p ad-rotator-test run ad-rotator migrate --config=$(CONFIG)
-	@ADR_TEST_API_HOST=localhost:50051 go test -v -count=1 ./... || code=$$?
-	@make downtest
-	@exit $$code
+	@docker-compose -f deployments/test/docker-compose.yml -p adr-test up -d --build
+	echo "Waiting for db..."; sleep 10
+	docker-compose -f deployments/test/docker-compose.yml -p adr-test exec adr /bin/true || exit 1
+	docker-compose -f deployments/test/docker-compose.yml -p adr-test exec adr go run main.go migrate --config=/opt/configs/config.compose.test.toml
+	docker-compose -f deployments/test/docker-compose.yml -p adr-test exec adr go test -v -count=1 ./...
+	make downtest
+	exit $$code
 
 downtest:
-	@docker-compose -f deployments/docker-compose.test.yml -p ad-rotator-test down || true
+	@docker-compose -f deployments/test/docker-compose.yml -p adr-test down || true
 
 
 .PHONY: install-deps lint test build migrate run docker-build up uptest downtest

@@ -1,17 +1,15 @@
 version: "3"
 services:
-  ad-rotator:
-    image: ad-rotator:latest
-    command:
-     - --config=/opt/configs/config.compose.test.toml
+  adr:
+    build:
+      context: ../..
+      dockerfile: deployments/test/Dockerfile
+    command: run main.go --config=/opt/configs/config.compose.test.toml
     environment:
       - ADR_STORAGE_DSN=postgres://ad-rotator:ad-rotator@db:5432/ad-rotator_test?sslmode=disable
+      - ADR_TEST_API_HOST=localhost:50051
       - GRPC_GO_LOG_SEVERITY_LEVEL=info
-      - GRPC_GO_LOG_VERBOSITY_LEVEL=99
-    volumes:
-      - ${ADR_CONFIG_PATH:-../configs}:/opt/configs
-    ports:
-      - 50051:50051
+      - GRPC_GO_LOG_VERBOSITY_LEVEL=2
     depends_on:
       - db
   db:
