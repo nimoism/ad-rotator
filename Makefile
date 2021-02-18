@@ -15,7 +15,7 @@ lint: install-deps
 	@golangci-lint run ./... || true
 
 test: install-deps
-	@go test -v -race -count=2 ./...
+	@go test -v -race -count=100 ./...
 
 build: install-deps
 	@go build -v -o $(BIN) ./cmd/
