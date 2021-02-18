@@ -3,9 +3,11 @@ services:
   ad-rotator:
     image: ad-rotator:latest
     command:
-     - --config=/opt/configs/config.compose.toml
+     - --config=/opt/configs/config.compose.test.toml
     environment:
-      - ADR_STORAGE_DSN=postgres://ad-rotator:ad-rotator@db:5432/ad-rotator?sslmode=disable
+      - ADR_STORAGE_DSN=postgres://ad-rotator:ad-rotator@db:5432/ad-rotator_test?sslmode=disable
+      - GRPC_GO_LOG_SEVERITY_LEVEL=info
+      - GRPC_GO_LOG_VERBOSITY_LEVEL=99
     volumes:
       - ${ADR_CONFIG_PATH:-../configs}:/opt/configs
     ports:
@@ -14,9 +16,8 @@ services:
       - db
   db:
     image: postgres:13-alpine
-    volumes:
-      - ${ADR_DB_PATH:-/tmp/ad-rotator/data/pg}:/var/lib/postgresql/data
+    volumes: []
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-ad-rotator}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-ad-rotator}
-      - POSTGRES_DB=${POSTGRES_DB:-ad-rotator}
+      - POSTGRES_DB=${POSTGRES_DB:-ad-rotator_test}

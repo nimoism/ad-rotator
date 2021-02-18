@@ -1,7 +1,7 @@
 !.gitkeep
 
 bin/*
-configs/*
+#configs/*
 !configs/*.example*
 deployments/.data/*
 

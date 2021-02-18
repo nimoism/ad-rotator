@@ -15,28 +15,28 @@ const (
 )
 
 const (
-	DBTypeUnknown DBType = iota
-	DBTypePostgres
-	DBTypeMySQL
+	StorageTypeUnknown StorageType = iota
+	StorageTypePostgres
+	StorageTypeMySQL
 )
 
-type DBType int
+type StorageType int
 
-func ParseDBType(dsn string) (DBType, error) {
+func ParseStorageType(dsn string) (StorageType, error) {
 	parsedURL, err := url.Parse(dsn)
 	if err != nil {
-		return 0, fmt.Errorf("DSN parsing error: %w", err)
+		return StorageTypeUnknown, fmt.Errorf("DSN parsing error: %w", err)
 	}
 	switch parsedURL.Scheme {
 	case "postgres", "postgresql":
-		return DBTypePostgres, nil
+		return StorageTypePostgres, nil
 	case "mysql":
-		return DBTypeMySQL, nil
+		return StorageTypeMySQL, nil
 	}
-	return DBTypeUnknown, nil
+	return StorageTypeUnknown, nil
 }
 
-func NewConn(ctx context.Context, logger log.Logger, driverName, dsn string, timeout time.Duration, maxConn, maxIdleConn int) (*sql.DB, error) {
+func NewConn(ctx context.Context, log log.Logger, driverName, dsn string, timeout time.Duration, maxConn, maxIdleConn int) (*sql.DB, error) {
 	if timeout > 0 {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, timeout)
@@ -50,7 +50,7 @@ func NewConn(ctx context.Context, logger log.Logger, driverName, dsn string, tim
 	}
 
 	var db *sql.DB
-	logger.Debugf("opening DB (%s, %s)", driverName, dsn)
+	log.Debugf("opening DB (%s, %s)", driverName, dsn)
 	db, err := sql.Open(driverName, dsn)
 	if err != nil {
 		return nil, fmt.Errorf("DB opening error: %w", err)

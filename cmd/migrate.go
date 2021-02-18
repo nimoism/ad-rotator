@@ -30,14 +30,14 @@ func migrate(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	dbType, err := intsql.ParseDBType(conf.Storage.DSN)
+	dbType, err := intsql.ParseStorageType(conf.Storage.DSN)
 	if err != nil {
 		return err
 	}
 
 	var driver string
 	switch dbType {
-	case intsql.DBTypePostgres:
+	case intsql.StorageTypePostgres:
 		driver = "postgres"
 	default:
 		return errors.New("no DB driver found")
