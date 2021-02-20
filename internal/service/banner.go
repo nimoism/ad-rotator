@@ -23,13 +23,19 @@ type BannerRepo interface {
 	SlotsByBanner(ctx context.Context, bannerID int) ([]entity.Slot, error)
 }
 
-type BannerService struct {
-	log  log.Logger
-	repo BannerRepo
+type BannerStream interface {
+	SendBannerClick(ctx context.Context, click entity.ClickEvent) error
+	SendBannerShow(ctx context.Context, show entity.ShowEvent) error
 }
 
-func NewBannerService(log log.Logger, repo BannerRepo) *BannerService {
-	return &BannerService{log: log, repo: repo}
+type BannerService struct {
+	log    log.Logger
+	repo   BannerRepo
+	stream BannerStream
+}
+
+func NewBannerService(log log.Logger, repo BannerRepo, stream BannerStream) *BannerService {
+	return &BannerService{log: log, repo: repo, stream: stream}
 }
 
 func (s *BannerService) ChooseBanner(ctx context.Context, slotID, userGroupID int) (entity.Banner, error) {
@@ -52,15 +58,19 @@ func (s *BannerService) ChooseBanner(ctx context.Context, slotID, userGroupID in
 	if err = s.repo.CreateBannerShow(ctx, showEvent); err != nil {
 		return banner, fmt.Errorf("show event registration error: %w", err)
 	}
-	// TODO: send to kafka
+	if err = s.stream.SendBannerShow(ctx, showEvent); err != nil {
+		return banner, fmt.Errorf("show event send error: %w", err)
+	}
 	return banner, nil
 }
 
-func (s *BannerService) Click(ctx context.Context, click entity.ClickEvent) error {
-	if err := s.repo.CreateBannerClick(ctx, click); err != nil {
+func (s *BannerService) Click(ctx context.Context, clickEvent entity.ClickEvent) error {
+	if err := s.repo.CreateBannerClick(ctx, clickEvent); err != nil {
 		return err
 	}
-	// TODO: send to kafka
+	if err := s.stream.SendBannerClick(ctx, clickEvent); err != nil {
+		return fmt.Errorf("click event send error: %w", err)
+	}
 	return nil
 }
 

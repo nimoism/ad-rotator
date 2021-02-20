@@ -10,15 +10,19 @@ type Repo interface {
 	UserGroupRepo
 }
 
+type Stream interface {
+	BannerStream
+}
+
 type Service struct {
 	*BannerService
 	*SlotService
 	*UserGroupService
 }
 
-func NewService(log log.Logger, repo Repo) *Service {
+func NewService(log log.Logger, repo Repo, stream Stream) *Service {
 	return &Service{
-		BannerService:    NewBannerService(log, repo),
+		BannerService:    NewBannerService(log, repo, stream),
 		SlotService:      NewSlotService(log, repo),
 		UserGroupService: NewUserGroupService(log, repo),
 	}

@@ -7,10 +7,11 @@ import (
 type Config struct {
 	Logger  LoggerConf
 	Storage StorageConf
-	API     NetConfig
+	API     NetConf
+	Stream  StreamConf
 }
 
-type NetConfig struct {
+type NetConf struct {
 	Listen string
 }
 
@@ -27,4 +28,8 @@ type StorageConf struct {
 	MaxConn       int `mapstructure:"max_conn"`
 	Retry         int
 	RetryInterval time.Duration `mapstructure:"retry_interval"`
+}
+
+type StreamConf struct {
+	Host string
 }

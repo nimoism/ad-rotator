@@ -11,6 +11,7 @@ import (
 	intgrpc "github.com/nimoism/ad-rotator/internal/api/grpc"
 	"github.com/nimoism/ad-rotator/internal/log"
 	intservice "github.com/nimoism/ad-rotator/internal/service"
+	"github.com/nimoism/ad-rotator/internal/stream/kafka"
 )
 
 type App struct {
@@ -43,7 +44,13 @@ func (a *App) Run(ctx context.Context) error {
 	}
 	a.log.Debug("Repository initialized")
 
-	service := intservice.NewService(a.log, repo)
+	stream, err := kafka.NewStream(a.log, conf.Stream.Host)
+	if err != nil {
+		return fmt.Errorf("app starting error: %w", err)
+	}
+	a.log.Debug("Streams initialized")
+
+	service := intservice.NewService(a.log, repo, stream)
 	a.log.Debug("Services initialized")
 
 	api := intgrpc.NewAPIServer(a.log, service)
