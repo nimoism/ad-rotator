@@ -5,4 +5,4 @@ COPY . .
 RUN go mod download
 
 ENTRYPOINT ["go"]
-CMD ["run", "main.go", "--config=configs/config.toml"]
+CMD ["run", "main.go", "--config=configs/config.compose.test.toml"]

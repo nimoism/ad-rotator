@@ -36,11 +36,3 @@ type UserGroup struct {
 	ID   int
 	Name string
 }
-
-type Event struct {
-	ID        int
-	Slot      *Slot
-	Banner    *Banner
-	UserGroup *UserGroup
-	DateTime  time.Time
-}

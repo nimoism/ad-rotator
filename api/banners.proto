@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "api/slots.proto";
+import "google/protobuf/timestamp.proto";
 
 package api;
 option go_package = ".;pb";
@@ -82,3 +83,16 @@ message UnbindSlotRequest {
   int64 slot_id = 2;
 }
 message UnbindSlotResult {}
+
+message BannerEvent {
+  enum Type {
+    UNKNOWN = 0;
+    SHOW = 1;
+    CLICK = 2;
+  }
+  Type type = 1;
+  int64 banner_id = 2;
+  int64 slot_id   = 3;
+  int64 ug_id  = 4;
+  google.protobuf.Timestamp dt = 5;
+}

@@ -12,3 +12,6 @@ max_conn = 10
 max_idle_conn = 30
 retry = 20
 retry_interval = '500ms'
+
+[stream]
+host = 'kafka:9092'
