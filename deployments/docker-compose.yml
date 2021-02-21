@@ -31,15 +31,13 @@ services:
       - ZOOKEEPER_TICK_TIME=2000
   kafka:
     hostname: kafka
-    #    image: confluentinc/cp-kafka:latest
-    image: wurstmeister/kafka
+    image: wurstmeister/kafka:latest
     expose:
       - 9092
       - 19092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_CREATE_TOPICS: events:1:1
       KAFKA_ZOOKEEPER_CONNECT: zk:2181
       KAFKA_BOOTSTRAP_SERVER: kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -47,8 +45,5 @@ services:
       KAFKA_LISTENERS: OUTSIDE://:19092,INSIDE://:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-    networks:
-      - adr
     depends_on:
       - zk
-

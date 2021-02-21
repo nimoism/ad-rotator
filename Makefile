@@ -18,7 +18,7 @@ test: install-deps
 	@go test -v -race -count=100 ./...
 
 build: install-deps
-	@go build -v -o $(BIN) ./cmd/
+	@go build -v -o $(BIN) ./main.go
 
 migrate: install-deps
 	@[ "$$DSN" ] || (echo "\$$DSN isn't defined" && exit 1)
@@ -38,7 +38,6 @@ down:
 
 uptest:
 	@docker-compose -f deployments/test/docker-compose.yml -p adr-test up -d --build
-	echo "Waiting for db and kafka..."; sleep 10
 	docker-compose -f deployments/test/docker-compose.yml -p adr-test exec adr /bin/true || exit 1
 	docker-compose -f deployments/test/docker-compose.yml -p adr-test exec adr go run main.go migrate --config=/opt/configs/config.compose.test.toml
 	docker-compose -f deployments/test/docker-compose.yml -p adr-test exec adr go test -v -count=1 ./...
