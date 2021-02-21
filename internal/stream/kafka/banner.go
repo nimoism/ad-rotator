@@ -38,7 +38,7 @@ func (s *BannerStream) SendBannerClick(ctx context.Context, click entity.ClickEv
 		Dt:       timestamppb.New(click.Created),
 	})
 	if err != nil {
-		return fmt.Errorf("banner click event seinding to stream error: %w", err)
+		return fmt.Errorf("banner click event sending to stream error: %w", err)
 	}
 	s.log.Debugf("banner click event sent to stream")
 	return nil
@@ -53,7 +53,7 @@ func (s *BannerStream) SendBannerShow(ctx context.Context, show entity.ShowEvent
 		Dt:       timestamppb.New(show.Created),
 	})
 	if err != nil {
-		return fmt.Errorf("banner show event seinding to stream error: %w", err)
+		return fmt.Errorf("banner show event sending to stream error: %w", err)
 	}
 	s.log.Debugf("banner show event sent to stream")
 	return nil
